@@ -1,0 +1,36 @@
+services:
+  comfyui:
+     # Tag the image locally
+    image: nikiakbar/comfyui-wsl:latest
+    
+    container_name: comfyui_wsl
+    
+    # Restart automatically if it crashes
+    restart: unless-stopped
+
+    # Port mapping (Host : Container)
+    ports:
+      - "8188:8188"
+
+    # Volume Mappings
+    # Creates a 'comfyui-data' folder next to this file on your host
+    volumes:
+      - ./comfyui-data/models:/app/models
+      - ./comfyui-data/output:/app/output
+      - ./comfyui-data/input:/app/input
+      - ./comfyui-data/custom_nodes:/app/custom_nodes
+      # Optional: Persist pip cache to speed up rebuilds
+      - ./comfyui-data/cache:/root/.cache/pip
+
+    # Environment variables (Optional overrides)
+    environment:
+      - CLI_ARGS=--listen 0.0.0.0 --port 8188 --preview-method auto
+
+    # GPU Reservation (Crucial for WSL2/Nvidia)
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
