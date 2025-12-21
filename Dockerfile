@@ -1,57 +1,55 @@
-# Use NVIDIA base for guaranteed driver compatibility
-FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
+# FROM your base image
+FROM comfyui-base:v1
 
-# Prevent interactive prompts
-ENV DEBIAN_FRONTEND=noninteractive
-ENV PYTHONUNBUFFERED=1
+ARG START_PORT=8188
+ENV PORT=${START_PORT}
 
-# Set shell to bash
-SHELL ["/bin/bash", "-c"]
+WORKDIR /app/pre_installed_nodes
 
+COPY custom_nodes.txt /tmp/custom_nodes.txt
+
+# 1. Parallel Clone (Fixed line endings)
+RUN sed -i 's/\r$//' /tmp/custom_nodes.txt && \
+    grep -v "^#" /tmp/custom_nodes.txt | grep -v "^$" | \
+    awk '{print "https://github.com/" $1 ".git"}' | \
+    xargs -n 1 -P 8 git clone
+
+# 2. SAFETY NET: Explicitly install known problem packages
+# We add 'torchlanc' here because WhiteRabbit needs it and sometimes misses it.
+RUN uv pip install --system \
+    opencv-python-headless \
+    gguf \
+    soundfile \
+    piexif \
+    torchlanc \
+    imageio-ffmpeg \
+    "huggingface_hub<0.25.0" \
+    spandrel \
+    sageattention
+
+# 3. SEQUENTIAL INSTALL (The Fix)
+# Instead of merging (which causes conflicts), we find each file and install it one by one.
+# We add '|| true' so if ONE node has a broken requirement, it doesn't kill the whole build.
+RUN find . -maxdepth 3 -name "requirements.txt" \
+    -exec echo "Installing requirements for: {}" \; \
+    -exec uv pip install --system --no-cache-dir -r {} \; \
+    || true
+
+# Reset Workdir
 WORKDIR /app
 
-# 1. Install System Deps
-# ffmpeg: for video nodes
-# git/wget: for downloading nodes/models
-# libgl1/libglib2.0: for OpenCV
-RUN apt-get update && apt-get install -y \
-    python3.11 \
-    python3.11-venv \
-    python3.11-dev \
-    python3-pip \
-    git \
-    wget \
-    ffmpeg \
-    libgl1 \
-    libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
+# Setup Entrypoint
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# 2. Set Python 3.11 as default
-# This ensures 'python' command calls python3.11
-RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1 \
-    && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
+# Create Directories
+RUN mkdir -p models/checkpoints models/loras models/embeddings output input user custom_nodes
 
-# 3. Upgrade pip
-RUN python -m pip install --upgrade pip
+# Add Workflow
+RUN mkdir -p /app/user/default/workflows
+# COPY Detailer_V25.json /app/user/default/workflows/Detailer_V25.json
 
-# 4. Clone ComfyUI
-# We clone into /app/ComfyUI to keep things organized
-RUN git clone https://github.com/comfyanonymous/ComfyUI.git .
+EXPOSE ${START_PORT}
 
-# 5. Install PyTorch & Dependencies
-# We install Torch specifically for CUDA 12.1 to match the base image
-RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-
-# 6. Install ComfyUI requirements
-RUN pip install -r requirements.txt
-
-# 7. Create directory structure for mapping
-# This ensures permissions exist before mounting
-RUN mkdir -p models/checkpoints models/loras models/embeddings output input custom_nodes
-
-# 8. Expose Port
-EXPOSE 8188
-
-# 9. Startup Command
-# --listen is required for Docker
-CMD ["python", "main.py", "--listen", "0.0.0.0", "--port", "8188"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["sh", "-c", "python main.py --listen 0.0.0.0 --port ${PORT:-8188}"]

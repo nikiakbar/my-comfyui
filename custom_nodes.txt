@@ -1,0 +1,23 @@
+ltdrdata/ComfyUI-Manager
+yolain/ComfyUI-Easy-Use
+ltdrdata/ComfyUI-Impact-Pack
+ltdrdata/ComfyUI-Impact-Subpack
+rgthree/rgthree-comfy
+pythongosssss/ComfyUI-Custom-Scripts
+ssitu/ComfyUI_UltimateSDUpscale
+Miosp/ComfyUI-FBCNN
+Fannovel16/comfyui_controlnet_aux
+alexopus/ComfyUI-Image-Saver
+willmiao/ComfyUI-Lora-Manager
+Jonseed/ComfyUI-Detail-Daemon
+# --- New Dependencies for Wan2.1 & Video ---
+Kijai/ComfyUI-KJNodes
+Fannovel16/ComfyUI-Frame-Interpolation
+Kosinkadink/ComfyUI-VideoHelperSuite
+city96/ComfyUI-GGUF
+Smirnov75/ComfyUI-mxToolkit
+Kijai/ComfyUI-WanVideoWrapper
+JamesWalker55/comfyui-various
+Artificial-Sweetener/comfyui-WhiteRabbit
+cubiq/ComfyUI_essentials
+chrisgoringe/cg-use-everywhere
