@@ -1,4 +1,4 @@
-ltdrdata/ComfyUI-Manager
+##ltdrdata/ComfyUI-Manager
 yolain/ComfyUI-Easy-Use
 ltdrdata/ComfyUI-Impact-Pack
 ltdrdata/ComfyUI-Impact-Subpack
@@ -10,6 +10,9 @@ Fannovel16/comfyui_controlnet_aux
 alexopus/ComfyUI-Image-Saver
 willmiao/ComfyUI-Lora-Manager
 Jonseed/ComfyUI-Detail-Daemon
+crystian/ComfyUI-Crystools
+ltdrdata/was-node-suite-comfyui
+alt-key-project/comfyui-dream-project
 # --- New Dependencies for Wan2.1 & Video ---
 Kijai/ComfyUI-KJNodes
 Fannovel16/ComfyUI-Frame-Interpolation

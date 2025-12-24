@@ -22,8 +22,9 @@ services:
 
       - /mnt/z/Locals/system/outputs/comfyui:/app/output
       - /mnt/x/comfyui/input:/app/input
-      
-      - /mnt/x/comfyui/custom_nodes:/app/custom_nodes
+      - /mnt/x/comfyui/workflows:/app/user/default/workflows
+      - /mnt/x/comfyui/:/app/logs
+      # - /mnt/x/comfyui/custom_nodes:/app/custom_nodes
       
       # Optional: Persist pip cache to speed up rebuilds
       - ./comfyui-data/cache:/root/.cache/pip
