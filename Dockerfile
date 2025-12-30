@@ -25,7 +25,8 @@ RUN uv pip install --system \
     imageio-ffmpeg \
     "huggingface_hub<0.25.0" \
     spandrel \
-    sageattention
+    sageattention \
+    boto3
 
 # 3. SEQUENTIAL INSTALL (The Fix)
 # Instead of merging (which causes conflicts), we find each file and install it one by one.
