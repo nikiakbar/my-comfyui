@@ -1,5 +1,5 @@
 # FROM your base image
-FROM comfyui-base:v1
+FROM nikiakbar/my-comfyui:base
 
 ARG START_PORT=8188
 ENV PORT=${START_PORT}
