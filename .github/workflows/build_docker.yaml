@@ -11,8 +11,8 @@ on:
   workflow_dispatch:
 
 env:
-  # Define image name here (repository name)
-  IMAGE_NAME: comfyui-wsl
+
+  IMAGE_NAME: my-comfyui
   
 jobs:
   build-and-push:
